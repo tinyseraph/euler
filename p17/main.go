@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"strings"
+	"unicode/utf8"
 )
 
 /*
@@ -16,12 +18,36 @@ The use of "and" when writing out numbers is in compliance with British usage.
 */
 
 func main() {
+	//check_letters(5)
+	//check_letters(115)
+	//check_letters(342)
+	check_letters(1000)
+}
 
-	trg := []int{10, 105, 125, 200, 211, 222}
+func test_sample() {
+	trg := []int{10, 115, 125, 200, 211, 222, 342}
 	for _, x := range trg {
-		fmt.Printf("%v:\t%v \n", x, number_reader(x))
+		numletter := number_reader(x)
+		numletter_ns := strings.Replace(number_reader(x), " ", "", -1)
+		fmt.Printf("%v\n\t%v\n\t%v\n\tsize:  %d\n", x, numletter, numletter_ns, utf8.RuneCountInString(numletter_ns))
 	}
-	return
+}
+
+func test_sample5() {
+	ret := ""
+	for i := 1; i <= 5; i += 1 {
+		ret = ret + number_reader(i)
+	}
+	fmt.Printf("%v\n%d", ret, len(ret))
+}
+
+func check_letters(num int) {
+	ret := ""
+	for i := 1; i <= num; i += 1 {
+		ret = ret + number_reader(i)
+	}
+	ret_ns := strings.Replace(ret, " ", "", -1)
+	fmt.Printf("letter's size: %d", utf8.RuneCountInString(ret_ns))
 }
 
 func number_reader(num int) string {
@@ -47,7 +73,7 @@ func number_reader(num int) string {
 		19: "nineteen",
 		20: "twenty",
 		30: "thirty",
-		40: "fourty",
+		40: "forty",
 		50: "fifty",
 		60: "sixty",
 		70: "seventy",
@@ -59,19 +85,20 @@ func number_reader(num int) string {
 	res := ""
 	if num/1000 == 1 {
 		res = res + "one thousand"
+		return res
 	}
 	if num%100 == 0 {
-		tmp = fmt.Sprintf("%s handred", words_map[int(num/100)])
+		tmp = fmt.Sprintf("%s hundred", words_map[int(num/100)])
 		res = res + tmp
 	} else if num/100 > 0 && num%100 > 0 {
 		_, chk := words_map[num%100]
 		if chk == true {
-			tmp = fmt.Sprintf("%s handred and %s", words_map[int(num/100)], words_map[num%100])
+			tmp = fmt.Sprintf("%s hundred and %s", words_map[int(num/100)], words_map[num%100])
 		} else {
 			//check_two_digit := num % 100
 			reduce_one_digit := num%100 - num%10
 			one_digit := num % 10
-			tmp = fmt.Sprintf("%s handred and %s %s",
+			tmp = fmt.Sprintf("%s hundred and %s %s",
 				words_map[int(num/100)],
 				words_map[reduce_one_digit],
 				words_map[one_digit])
@@ -79,10 +106,19 @@ func number_reader(num int) string {
 		res = res + tmp
 	}
 	//	nty := num / 10
-	_, chk := words_map[num]
-	if chk == true {
-		tmp := fmt.Sprintf("%s", words_map[num])
-		res = res + tmp
+	if num < 100 {
+		_, chk := words_map[num]
+		if chk == true {
+			tmp := fmt.Sprintf("%s", words_map[num])
+			res = res + tmp
+		} else {
+			reduce_one_digit := num%100 - num%10
+			one_digit := num % 10
+			tmp = fmt.Sprintf("%s %s",
+				words_map[reduce_one_digit],
+				words_map[one_digit])
+			res = res + tmp
+		}
 	}
 
 	return res
