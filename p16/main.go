@@ -11,16 +11,50 @@ func main() {
 		What is the sum of the digits of the number 2^1000?
 	*/
 
-	for i := 1; i <= 15; i += 1 {
+	/* badsample
+	for i := 1; i <= 30; i += 1 {
 		trg := math.Pow(2, float64(i))
 		fmt.Printf("number: %v => %v\n", trg, digitsum(trg))
 	}
-
 	trg := math.Pow(2, float64(100))
-	fmt.Printf("pow: %v %v %v\n", trg, trg/10.0, math.Abs(trg))
 	fmt.Printf("number: %v => %v\n", trg, digitsum(trg))
+	*/
+
+	/* try sample */
+	testdata := [][]int{{2, 2}, {2, 8}, {2, 10}, {2, 15}, {2, 100}, {2, 1000}}
+	sums := 0
+	for _, x := range testdata {
+		powed_num := largedigitPower(x[0], x[1])
+		sums = array_sum(powed_num)
+		fmt.Printf(">> arg: %v \n", x)
+		fmt.Printf("   arry: %v \n   sum: %v\n", powed_num, sums)
+		sums = 0
+	}
 }
 
+func largedigitPower(base int, expon int) []int {
+	digts := make([]int, 350)
+	tmp := 0
+	digts[0] = 1
+	for i := 1; i <= expon; i += 1 {
+		for idx, v := range digts {
+			tmp1 := int((v * base) / 10)
+			digts[idx] = (v*base)%10 + tmp
+			tmp = tmp1
+		}
+	}
+	return digts
+}
+
+func array_sum(target []int) int {
+	ret := 0
+	for _, x := range target {
+		ret += x
+	}
+	return ret
+}
+
+/* bad sample */
 func digitsum(dgt float64) int {
 	ret := 0
 	clc := math.Abs(dgt)
